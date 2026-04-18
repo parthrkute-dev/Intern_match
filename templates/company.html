@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recruiter Dashboard | Intern Match</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+body{
+    background:linear-gradient(135deg,#eef2ff,#f8fafc,#dbeafe);
+    min-height:100vh;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+.navbar{
+    background:rgba(15,23,42,.92)!important;
+    backdrop-filter:blur(10px);
+}
+
+.brand{
+    font-weight:700;
+    font-size:1.2rem;
+    color:white;
+}
+
+.card-ui{
+    border:none;
+    border-radius:24px;
+    background:rgba(255,255,255,.92);
+    box-shadow:0 20px 40px rgba(0,0,0,.08);
+}
+
+.section-title{
+    font-weight:700;
+    margin-bottom:18px;
+}
+
+.form-label{
+    font-size:.86rem;
+    font-weight:700;
+    color:#475569;
+}
+
+.form-control,.form-select{
+    border-radius:14px;
+    padding:.85rem 1rem;
+}
+
+textarea.form-control{
+    min-height:100px;
+}
+
+.btn-main{
+    border:none;
+    border-radius:14px;
+    padding:.95rem;
+    font-weight:700;
+    background:linear-gradient(90deg,#2563eb,#7c3aed);
+}
+
+.match-card{
+    border:1px solid #eef2ff;
+    border-radius:18px;
+    padding:16px;
+    margin-bottom:12px;
+    background:white;
+}
+
+.score{
+    background:linear-gradient(90deg,#2563eb,#7c3aed);
+    color:white;
+    border-radius:999px;
+    padding:10px 14px;
+    font-weight:700;
+    min-width:90px;
+    text-align:center;
+}
+
+.empty{
+    padding:22px;
+    border:1px dashed #d1d5db;
+    border-radius:16px;
+    color:#6b7280;
+    background:white;
+}
+
+.small-muted{
+    font-size:.92rem;
+    color:#6b7280;
+}
+</style>
+</head>
+
+<body>
+
+<nav class="navbar p-3 mb-4">
+<div class="container d-flex justify-content-between align-items-center">
+<div class="brand">
+Intern Match <span class="badge bg-primary ms-2">RECRUITER</span>
+</div>
+
+<a href="/logout" class="btn btn-outline-light btn-sm rounded-pill px-3">
+Logout
+</a>
+</div>
+</nav>
+
+<div class="container pb-5">
+<div class="row g-4">
+
+<div class="col-lg-5">
+<div class="card-ui p-4">
+
+<h4 class="section-title">Post Internship Opening</h4>
+
+<div class="mb-3">
+<label class="form-label">Company Name</label>
+<input type="text" id="name" class="form-control" placeholder="TechFlow Solutions">
+</div>
+
+<div class="mb-3">
+<label class="form-label">Industry Sector</label>
+<input type="text" id="sector" class="form-control" placeholder="FinTech, AI, Healthcare">
+</div>
+
+<div class="mb-3">
+<label class="form-label">Role Title</label>
+<input type="text" id="role" class="form-control" placeholder="Frontend Intern">
+</div>
+
+<div class="mb-3">
+<label class="form-label">Required Skills</label>
+<input type="text" id="skills" class="form-control" placeholder="Python, React, SQL">
+</div>
+
+<div class="row g-3 mb-3">
+<div class="col-md-6">
+<label class="form-label">Stipend</label>
+<select id="stipend" class="form-select">
+<option value="Paid">Paid</option>
+<option value="Unpaid">Unpaid</option>
+</select>
+</div>
+
+<div class="col-md-6">
+<label class="form-label">Mode</label>
+<select id="mode" class="form-select">
+<option value="Online">Remote</option>
+<option value="Offline">On-site</option>
+</select>
+</div>
+</div>
+
+<div class="mb-3">
+<label class="form-label">Culture / Interests</label>
+<input type="text" id="hobbies" class="form-control" placeholder="Innovation, Gaming, Coffee">
+</div>
+
+<div class="mb-4">
+<label class="form-label">Office Address</label>
+<textarea id="address" class="form-control" placeholder="Street, City, Zip"></textarea>
+</div>
+
+<button onclick="save()" class="btn btn-main text-white w-100">
+Publish & Find Talent
+</button>
+
+</div>
+</div>
+
+<div class="col-lg-7">
+<div class="card-ui p-4" style="min-height:520px;">
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+<h4 class="section-title mb-0">Top Candidate Matches</h4>
+<span class="small-muted">AI Ranked</span>
+</div>
+
+<div id="out" class="empty">
+Publish an opening to see matching candidates.
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+<script>
+async function save() {
+
+const data = {
+    name:name.value,
+    sector:sector.value,
+    role:role.value,
+    skills:skills.value,
+    stipend:stipend.value,
+    mode:mode.value,
+    hobbies:hobbies.value,
+    address:address.value
+};
+
+await fetch('/api/save_profile',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(data)
+});
+
+loadMatches();
+}
+
+async function loadMatches(){
+
+const out = document.getElementById('out');
+out.innerHTML = "Running AI ranking...";
+
+const res = await fetch('/api/match');
+const matches = await res.json();
+
+if(matches.length === 0){
+    out.innerHTML = `<div class="empty">No direct matches found yet.</div>`;
+    return;
+}
+
+out.innerHTML = matches.map(m => `
+<div class="match-card d-flex justify-content-between align-items-center">
+    <div>
+        <div class="fw-bold">${m.student}</div>
+        <div class="small-muted">Potential fit for ${m.company}</div>
+    </div>
+    <div class="score">${m.score}</div>
+</div>
+`).join('');
+
+}
+</script>
+
+</body>
+</html>

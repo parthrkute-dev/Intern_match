@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard | Intern Match</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+body{
+    background:linear-gradient(135deg,#eef2ff,#f8fafc,#dbeafe);
+    min-height:100vh;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+.navbar{
+    background:rgba(255,255,255,.85)!important;
+    backdrop-filter:blur(10px);
+}
+
+.brand{
+    font-size:1.3rem;
+    font-weight:700;
+}
+
+.card-ui{
+    border:none;
+    border-radius:22px;
+    background:rgba(255,255,255,.92);
+    box-shadow:0 20px 40px rgba(0,0,0,.08);
+}
+
+.section-title{
+    font-weight:700;
+    margin-bottom:18px;
+}
+
+.form-control,.form-select{
+    border-radius:14px;
+    padding:.85rem 1rem;
+}
+
+textarea{
+    min-height:110px;
+}
+
+.btn-main{
+    border:none;
+    border-radius:14px;
+    padding:.9rem;
+    font-weight:600;
+    background:linear-gradient(90deg,#2563eb,#7c3aed);
+}
+
+.match-card{
+    border:1px solid #eef2ff;
+    border-radius:16px;
+    padding:16px;
+    margin-bottom:12px;
+    background:#fff;
+}
+
+.empty{
+    color:#6b7280;
+    padding:20px;
+    border:1px dashed #d1d5db;
+    border-radius:16px;
+    background:#fff;
+}
+</style>
+</head>
+
+<body>
+
+<nav class="navbar border-bottom p-3 mb-4">
+<div class="container d-flex justify-content-between align-items-center">
+    <span class="brand">Intern Match</span>
+    <a href="/logout" class="btn btn-outline-dark btn-sm rounded-pill px-3">Logout</a>
+</div>
+</nav>
+
+<div class="container pb-5">
+<div class="row g-4">
+
+<div class="col-lg-5">
+<div class="card-ui p-4">
+<h4 class="section-title">Build Your Profile</h4>
+
+<input type="text" id="name" class="form-control mb-3" placeholder="Full Name">
+<input type="text" id="sector" class="form-control mb-3" placeholder="Field / Sector">
+<input type="text" id="role" class="form-control mb-3" placeholder="Preferred Role">
+<input type="text" id="skills" class="form-control mb-3" placeholder="Skills (comma separated)">
+
+<div class="row g-3 mb-3">
+<div class="col-md-6">
+<select id="stipend" class="form-select">
+<option value="Paid">Paid</option>
+<option value="Unpaid">No Stipend</option>
+</select>
+</div>
+
+<div class="col-md-6">
+<select id="mode" class="form-select">
+<option value="Online">Online</option>
+<option value="Offline">Offline</option>
+</select>
+</div>
+</div>
+
+<input type="text" id="hobbies" class="form-control mb-3" placeholder="Hobbies / Interests">
+
+<textarea id="address" class="form-control mb-3" placeholder="Address"></textarea>
+
+<button onclick="save()" class="btn btn-main text-white w-100">
+Save & Run AI Match
+</button>
+</div>
+</div>
+
+<div class="col-lg-7">
+<div class="card-ui p-4">
+<h4 class="section-title">AI Matches</h4>
+<div id="out" class="empty">
+No matches yet. Fill profile and run AI match.
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<script>
+async function save() {
+    const data = {
+        name: document.getElementById('name').value,
+        sector: document.getElementById('sector').value,
+        role: document.getElementById('role').value,
+        skills: document.getElementById('skills').value,
+        stipend: document.getElementById('stipend').value,
+        mode: document.getElementById('mode').value,
+        hobbies: document.getElementById('hobbies').value,
+        address: document.getElementById('address').value
+    };
+
+    await fetch('/api/save_profile', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify(data)
+    });
+
+    document.getElementById('out').innerHTML = "Running AI match...";
+
+    const res = await fetch('/api/match');
+    const matches = await res.json();
+
+    if(matches.length === 0){
+        document.getElementById('out').innerHTML =
+        `<div class="empty">No matches found.</div>`;
+        return;
+    }
+
+    document.getElementById('out').innerHTML =
+    matches.map(m => `
+        <div class="match-card d-flex justify-content-between align-items-center">
+            <div>
+                <div class="fw-bold">${m.company}</div>
+                <small class="text-muted">Matching for ${m.student}</small>
+            </div>
+            <span class="badge bg-primary px-3 py-2 rounded-pill">
+                ${m.score} Match
+            </span>
+        </div>
+    `).join('');
+}
+</script>
+
+</body>
+</html>

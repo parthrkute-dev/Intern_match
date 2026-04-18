@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Select Portal | Intern Match</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:linear-gradient(135deg,#0f172a,#1e293b,#2563eb);
+    font-family:Arial, Helvetica, sans-serif;
+    overflow:hidden;
+}
+
+.glow{
+    position:absolute;
+    width:340px;
+    height:340px;
+    border-radius:50%;
+    filter:blur(120px);
+    opacity:.35;
+    animation:float 8s ease-in-out infinite;
+}
+
+.glow.one{
+    background:#3b82f6;
+    left:8%;
+    bottom:8%;
+}
+
+.glow.two{
+    background:#8b5cf6;
+    right:10%;
+    top:8%;
+    animation-delay:2s;
+}
+
+@keyframes float{
+    0%,100%{transform:translateY(0);}
+    50%{transform:translateY(-28px);}
+}
+
+.wrapper{
+    width:100%;
+    max-width:980px;
+    padding:24px;
+    position:relative;
+    z-index:2;
+}
+
+.hero{
+    text-align:center;
+    color:white;
+    margin-bottom:42px;
+}
+
+.hero h1{
+    font-size:2.4rem;
+    font-weight:800;
+    margin-bottom:10px;
+}
+
+.hero p{
+    color:#dbeafe;
+}
+
+.portal-card{
+    cursor:pointer;
+    border:none;
+    border-radius:28px;
+    padding:38px 28px;
+    background:rgba(255,255,255,.12);
+    backdrop-filter:blur(18px);
+    box-shadow:0 24px 50px rgba(0,0,0,.22);
+    color:white;
+    transition:.28s ease;
+    height:100%;
+}
+
+.portal-card:hover{
+    transform:translateY(-8px) scale(1.02);
+}
+
+.icon{
+    font-size:4rem;
+    margin-bottom:18px;
+}
+
+.portal-title{
+    font-size:1.45rem;
+    font-weight:700;
+    margin-bottom:8px;
+}
+
+.portal-sub{
+    color:#dbeafe;
+    min-height:48px;
+}
+
+.tag{
+    display:inline-block;
+    margin-top:16px;
+    padding:8px 14px;
+    border-radius:999px;
+    background:rgba(255,255,255,.14);
+    font-size:.82rem;
+    font-weight:700;
+}
+</style>
+</head>
+
+<body>
+
+<div class="glow one"></div>
+<div class="glow two"></div>
+
+<div class="wrapper container">
+
+<div class="hero">
+<h1>Choose Your Portal</h1>
+<p>Smart internship matching for students and recruiters.</p>
+</div>
+
+<div class="row g-4 justify-content-center">
+
+<div class="col-md-5">
+<div class="portal-card text-center" onclick="location.href='/student_login'">
+<div class="icon">🎓</div>
+<div class="portal-title">Student Portal</div>
+<div class="portal-sub">
+Create your profile, explore matches, and land your next internship.
+</div>
+<div class="tag">Find Opportunities</div>
+</div>
+</div>
+
+<div class="col-md-5">
+<div class="portal-card text-center" onclick="location.href='/company_login'">
+<div class="icon">🏢</div>
+<div class="portal-title">Company Portal</div>
+<div class="portal-sub">
+Post openings, discover top candidates, and recruit faster.
+</div>
+<div class="tag">Hire Talent</div>
+</div>
+</div>
+
+</div>
+</div>
+
+</body>
+</html>
